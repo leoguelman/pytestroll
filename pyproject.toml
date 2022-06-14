@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "pytestroll"
+version = "0.0.9999"
+description = "Profit Maximizing A/B Testing"
+authors = ["Leo Guelman"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
