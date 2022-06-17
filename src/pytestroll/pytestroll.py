@@ -9,12 +9,12 @@ from joblib import Parallel, delayed
 #class TestRoll:
 #    """
 #    Performs various quantities required for test & roll A/B testing
-#    """
+#    "
 #    
 #    def __init__(self, method: str = 'ips', tau: float = 0.001):
             
 
-def test_size_nn(N, s, mu=None, sigma=None):
+def tr_size_nn(N, s, mu=None, sigma=None):
     """
     
     # computes the profit-maximizing test size for a 2-armed Test & Roll
@@ -168,7 +168,7 @@ def profit_nn(n, N, s, mu, sigma, log_n=False, sign=1.0):
 #   (test + deploy)/N
 # }
 
-def test_size_nht(s, d, conf=0.95, power=0.8, N=None):
+def nht_size_nn(s, d, conf=0.95, power=0.8, N=None):
     """
     
     Parameters
@@ -382,7 +382,7 @@ def one_rep_profit(n, N, s, mu, sigma, K, TS=False):
 # }
 
 
-def profit_nn_sim(n, N, s, mu, sigma, K=2, TS=False, R=1000):
+def profit_nn_sim(n, N, s, mu, sigma, K=2, TS=False, R=1000, seed=42):
     """
     
 
@@ -410,6 +410,8 @@ def profit_nn_sim(n, N, s, mu, sigma, K=2, TS=False, R=1000):
     None.
 
     """
+    np.random.seed(seed)
+    
     if(type(s) == float):
         s = np.array([s])
     if(type(n) == float):
