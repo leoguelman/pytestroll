@@ -293,10 +293,10 @@ def error_rate_nn(n, s, sigma):
 # }
 
 
-def _one_rep_profit(n, N, s, mu, sigma, K, TS=False, seed=None):
+def one_rep_profit(n, N, s, mu, sigma, K, TS=False, seed=None):
     
-     np.random.seed(seed)
-     
+    np.random.seed(seed)
+    
      # utility function used in profit_nn_sim() to simulate one set of potential outcomes
      m = np.random.normal(mu, sigma, size=K)    
      y = np.random.normal(m, s, size=(N,K))
@@ -414,6 +414,7 @@ def profit_nn_sim(n, N, s, mu, sigma, K=2, TS=False, R=1000, seed=42):
 
     """
     np.random.seed(seed)
+    
     r = [np.random.randint(1,10000) for _ in range(R)]
     
     if(type(s) == float):
@@ -429,7 +430,7 @@ def profit_nn_sim(n, N, s, mu, sigma, K=2, TS=False, R=1000, seed=42):
     if n.size == 1:
         n = np.repeat(n, K)
     
-    perfect_info, test_roll, thom_samp, error, deploy_1 = zip(*Parallel(n_jobs=-2)(delayed(_one_rep_profit)(n, N, s, mu, sigma, K, TS, seed=r[i]) for i in range(R)))
+    perfect_info, test_roll, thom_samp, error, deploy_1 = zip(*Parallel(n_jobs=-2)(delayed(one_rep_profit)(n, N, s, mu, sigma, K, TS) for i in range(R)))
     reps = pd.DataFrame({'perfect_info': perfect_info, 'test_roll': test_roll, 'thom_samp': thom_samp, 'error': error, 'deploy_1': deploy_1})
     
     if not TS:
@@ -577,7 +578,7 @@ def test_eval_nn(n, N, s, mu, sigma):
 # }
 
 
-def _one_rep_test_size(n_vals, N, s, mu, sigma, K, seed=None):
+def one_rep_test_size(n_vals, N, s, mu, sigma, K):
     """
 
     Parameters
@@ -600,7 +601,6 @@ def _one_rep_test_size(n_vals, N, s, mu, sigma, K, seed=None):
     None.
 
     """
-    np.random.seed(seed)
     
     m = np.random.normal(mu, sigma, size=K)  
     y = np.random.normal(m, s, size=(N,K))
@@ -645,10 +645,7 @@ def _one_rep_test_size(n_vals, N, s, mu, sigma, K, seed=None):
 
 
 
-def tr_size_nn_sim(N, s, mu, sigma, K=2, R=1000, seed=42):
-    
-    np.random.seed(seed)
-    r = [np.random.randint(1,10000) for _ in range(R)]
+def test_size_nn_sim(N, s, mu, sigma, K=2, R=1000):
     
     if(type(s) == float):
         s = np.array([s])
@@ -661,7 +658,7 @@ def tr_size_nn_sim(N, s, mu, sigma, K=2, R=1000, seed=42):
     
         n_vals = np.array(range(int(np.floor(N/K)-1)))
     
-        n_vals_, profit_ = zip(*Parallel(n_jobs=-2)(delayed(_one_rep_test_size)(n_vals, N, s, mu, sigma, K, seed=r[i]) for i in range(R)))
+        n_vals_, profit_ = zip(*Parallel(n_jobs=-2)(delayed(one_rep_test_size)(n_vals, N, s, mu, sigma, K) for i in range(R)))
         reps = pd.DataFrame({'n_vals': np.hstack(n_vals_), 'profit': np.hstack(profit_)})
         exp_profit = pd.pivot_table(reps, values='profit', columns = 'n_vals', aggfunc = 'sum') / R
         n = np.repeat(n_vals[np.argmax(exp_profit)], K)
