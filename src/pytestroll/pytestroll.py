@@ -5,7 +5,6 @@ from scipy.optimize import minimize
 from joblib import Parallel, delayed
 
 
-
 #class TestRoll:
 #    """
 #    Performs various quantities required for test & roll A/B testing

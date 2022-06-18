@@ -7,7 +7,7 @@ from joblib import Parallel, delayed
 
 class NHST:
     def __init__(self, s:float = None, d:float = None, N:int = None, 
-                       conf:float = 0.95, power:float = 0.8):
+                       conf:float = 0.95, power:float = 0.8) -> None:
         
         if(type(self.s) == float):
             self.s = np.array([self.s])
@@ -18,7 +18,7 @@ class NHST:
         self.power = power
      
     
-    def __repr__(self):
+    def __repr__(self) -> str:
             
             items = ("%s = %r" % (k, v) for k, v in self.__dict__.items())
             return "<%s: {%s}>" % (self.__class__.__name__, ', '.join(items))
@@ -72,7 +72,7 @@ class TestRoll:
          
     """
 
-    def __init__(self, N:int = None, s:float = None, mu:float = None, sigma:float = None):
+    def __init__(self, N:int = None, s:float = None, mu:float = None, sigma:float = None) -> None:
         
         self.N = N
         if(type(self.s) == float):
@@ -81,7 +81,7 @@ class TestRoll:
         self.mu = mu
         self.sigma = sigma
         
-    def __repr__(self):
+    def __repr__(self) -> str:
             
             items = ("%s = %r" % (k, v) for k, v in self.__dict__.items())
             return "<%s: {%s}>" % (self.__class__.__name__, ', '.join(items))
