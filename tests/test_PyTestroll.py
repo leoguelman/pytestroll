@@ -1,12 +1,8 @@
 from pytestroll.pytestroll import (
-    tr_size_nn, 
-    profit_nn,
-    nht_size_nn,
-    profit_perfect_nn,
-    error_rate_nn,
-    profit_nn_sim,
-    tr_size_nn_sim
+    NHST,
+    TestRoll
     )
+
 from numpy.testing import assert_almost_equal
 import numpy as np
 
@@ -16,11 +12,11 @@ def test_tr_size_nn():
     
     # Symmetric
     y1_ = np.array([2283.89002819, 2283.89002819])
-    y1= tr_size_nn(N = 100000, s=np.sqrt(0.68*(1-0.68)), mu=0.68, sigma=0.03)
+    y1 = TestRoll(N = 100000, s=np.sqrt(0.68*(1-0.68)), mu=0.68, sigma=0.03).tr_size_nn()
     
     # Asymmetric 
     y2_ = np.array([1858.50643038, 92412.762479])
-    y2 = tr_size_nn(N = 10000000, s=np.array([0.4, 0.6]), mu=np.array([0.5, 0.6]), sigma=np.array([0.03,0.03]))
+    y2 = TestRoll(N = 10000000, s=np.array([0.4, 0.6]), mu=np.array([0.5, 0.6]), sigma=np.array([0.03,0.03])).tr_size_nn()
     
     assert_almost_equal(y1_, y1)
     assert_almost_equal(y2_, y2)
@@ -30,9 +26,9 @@ def test_profit_nn():
     """ Test profit_nn"""
     
     y_ = np.float64(0.6153599861754739)
-    y = profit_nn(n=np.array([2283.89002819, 2283.89002819]), N=100000, 
-              s=np.sqrt(0.68*(1-0.68)), mu=0.6,  sigma=0.03, log_n=False, sign=1.0)
     
+    y = TestRoll(N=100000, s=np.sqrt(0.68*(1-0.68)), mu=0.60, sigma=0.03).profit_nn(n=np.array([2283.89002819, 2283.89002819]))
+     
     assert_almost_equal(y_, y)
 
 def test_nht_size_nn():
@@ -40,39 +36,40 @@ def test_nht_size_nn():
     
     # Symmetric
     y1_ = np.array([34158.32460389, 34158.32460389])
-    y1 = nht_size_nn(s=np.sqrt(0.68*(1-0.68)), d=0.01, conf=0.95, power=0.8)
-    
+    y1 = NHST(s=np.sqrt(0.68*(1-0.68)), d=0.01, conf=0.95, power=0.8).nht_size_nn()
+      
     assert_almost_equal(y1_, y1)
     
-    # Symmetric
+    # Symmetric (with finite population correction)
     y2_ = np.array([339.26886751, 339.26886751])
-    y2 = nht_size_nn(s=np.sqrt(0.68*(1-0.68)), d=0.1, conf=0.95, power=0.8, N=100000)
+    y2 = NHST(s=np.sqrt(0.68*(1-0.68)), d=0.1, conf=0.95, power=0.8).nht_size_nn(N=100000)
     
     assert_almost_equal(y2_, y2)
     
     # Asymmetric
     y3_ = np.array([431.68838539, 518.02606247])
-    y3 = nht_size_nn(s=np.array([0.5, 0.6]), d=0.1, conf=0.95, power=0.8)
+    y3 = NHST(s=np.array([0.5, 0.6]), d=0.1, conf=0.95, power=0.8).nht_size_nn()
     
     assert_almost_equal(y3_, y3)
     
-    # Asymmetric
+    # Asymmetric (with finite population correction)
     y4_ = np.array([427.63138466, 513.15766159])
-    y4 = nht_size_nn(s=np.array([0.5, 0.6]), d=0.1, conf=0.95, power=0.8, N=100000)
+    y4 = NHST(s=np.array([0.5, 0.6]), d=0.1, conf=0.95, power=0.8).nht_size_nn( N=100000)
     
     assert_almost_equal(y4_, y4)
     
 def test_profit_perfect_nn():
     
     y_ = np.float64(0.5169256875064326)
-    y = profit_perfect_nn(mu=0.5, sigma=0.03)
+    y = TestRoll(mu=0.5, sigma=0.03)._profit_perfect_nn()
     
     assert_almost_equal(y_, y)
     
 def test_error_rate_nn():
     
     y_ = np.float64(0.1445253424807597)
-    y = error_rate_nn(n = np.array([2283.89002819, 2283.89002819]), s=np.sqrt(0.68*(1-0.68)), sigma=0.02)
+    
+    y = TestRoll(s=np.sqrt(0.68*(1-0.68)), sigma=0.02)._error_rate_nn(n = np.array([2283.89002819, 2283.89002819]))
     
     assert_almost_equal(y_, y)
     
@@ -84,9 +81,10 @@ def test_profit_nn_sim():
     ye = np.float64(0.4)
     yd1 = np.float64(0.6)
     
-    y1 = profit_nn_sim(n=np.array([2283.89002819, 2283.89002819]), N=100000, s=np.sqrt(0.68*(1-0.68)), 
-                      mu=0.6, sigma=0.03, K=2, TS=True, R=10, seed=42)
-    
+    y1 = TestRoll(N=100000, s=np.sqrt(0.68*(1-0.68)), mu=0.6, sigma=0.03
+                  ).profit_nn_sim(n=np.array([2283.89002819, 2283.89002819]),
+                                  K=2, TS=True, R=10, seed=42             
+                                  )
     assert_almost_equal(yp, y1['profit'].iloc[0][1:].values)
     
     assert_almost_equal(yr, y1['regret'].iloc[0][1:].values)
@@ -102,9 +100,11 @@ def test_profit_nn_sim():
     ye = np.float64(0.1)
     yd1 = np.float64(0.4)
     
-    y2 = profit_nn_sim(n=np.array([1000, 2000]), N=100000, s=np.array([0.5, 0.6]), 
-                      mu=np.array([0.5, 0.6]),  sigma=np.array([0.5, 0.6]), K=2, TS=True, R=10, seed=42)
-    
+    y2 = TestRoll(N=100000, s=np.array([0.5, 0.6]), 
+                  mu=np.array([0.5, 0.6]),  sigma=np.array([0.5, 0.6])
+                  ).profit_nn_sim(n=np.array([1000, 2000]),
+                                  K=2, TS=True, R=10, seed=42             
+                                                                                        )  
     
     assert_almost_equal(yp, y2['profit'].iloc[0][1:].values)
     
@@ -120,8 +120,10 @@ def test_tr_size_nn_sim():
     
     # Symmetric
     y1_ = {'n': np.array([590, 590]), 'max_exp_profit': 0.6117075409508286}
-    y1 = tr_size_nn_sim(N=100000, s=np.sqrt(0.68*(1-0.68)), mu=0.6, sigma=0.03, K=2, R=10, seed=42)
     
+    y1 = TestRoll(N=100000, s=np.sqrt(0.68*(1-0.68)), mu=0.6, sigma=0.03
+                  ).tr_size_nn_sim(K=2, R=10, seed=42
+                                   ) 
     assert_almost_equal(y1_['n'], y1['n'])
     
     assert_almost_equal(y1_['max_exp_profit'], y1['max_exp_profit'])
