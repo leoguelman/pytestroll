@@ -2,9 +2,8 @@
 
 Profit Maximizing A/B Testing.
 
-`pytestroll` implements the methods in the paper "Profit-maximizing a/b tests" by Elea McDonnell Feit and Ron Berman.
+`pytestroll` implements the methods in the paper [Test & Roll: Profit-Maximizing A/B Tests](https://arxiv.org/abs/1811.00457) by Elea McDonnell Feit and Ron Berman.
 
-Source: Feit, E. M., & Berman, R. (2018). Profit-maximizing a/b tests. Available at SSRN.
 
 ## Installation
 
@@ -14,7 +13,30 @@ $ pip install pytestroll
 
 ## Usage
 
-- TODO
+`pytestroll` computes the profit-maximizing test size for a 2-armed A/B test, along with other functionality required to reproduce the paper results and examples. 
+
+```python
+from pytestroll.pytestroll import NHST, TestRoll
+import numpy as np
+    
+    
+mu = 0.68
+sigma = 0.03
+N = 100000
+
+# Profit-maximizing
+tr = TestRoll(N = N, s = np.sqrt(mu*(1-mu)), mu = mu, sigma = sigma)
+n_star = tr.tr_size_nn()
+print("Test & Roll samples:", n_star, '\n')
+
+# Compare to standard Null Hypothesis Significance Test paradigm
+
+d = 0.68*0.02 # 2% lift 
+
+nht = NHST(s=np.sqrt(mu*(1-mu)), d=d)
+n_nht = nht.nht_size_nn()
+print("NHST Samples:", n_nht, '\n')
+```
 
 ## Contributing
 
