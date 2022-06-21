@@ -1,3 +1,9 @@
+"""
+pytestroll Null Hypothesis Significance Test and Test & Roll classes
+"""
+
+# Author: Leo Guelman <leo.guelman@gmail.com>
+
 import numpy as np
 import pandas as pd
 from scipy.stats import norm
@@ -6,8 +12,25 @@ from joblib import Parallel, delayed
 
 
 class NHST:
-    def __init__(self, s:float = None, d:float = None, 
-                       conf:float = 0.95, power:float = 0.8) -> None:
+    """
+    Null Hypothesis Significance Testing
+    
+    Parameters
+    ----------
+    s: float
+       Response standard deviations
+    d: float
+       Minimum detectable difference between treatments
+    conf: float, optional 
+       1 - type I error rate
+    power: float, optional
+       1 - type II error rate
+       
+        
+    """
+    
+    def __init__(self, s:float, d:float, 
+                       conf:float = 0.95, power:float = 0.8):
         
         if(type(s) == float):
             s = np.array(s)
@@ -25,13 +48,19 @@ class NHST:
 
     def nht_size_nn(self, N:int = None):
         """
+        Computes sample size for a null hypothesis test comparing two 
+        treatments with finite population correction
         
         Parameters
         ----------
+        N: int, optional 
+           The finite population. If `N=None`, then no finite population 
+           correction is used.
        
         Returns
         -------
-        None.
+        array_like
+            The sample size for each treatment arm
 
         """
         
@@ -66,12 +95,24 @@ class NHST:
 
 class TestRoll:
     """
+    Profit Maximizing A/B Testing
     
-    Test Roll Class
-         
+    Parameters
+    ----------
+    N: int
+       The size of the deployment population
+    s: float
+       The (known) std dev of the outcome
+    mu: float
+       Means of the prior on the mean response
+    sigma: float
+       The std dev of the prior on the mean response
+       
+        
     """
+         
 
-    def __init__(self, N:int = None, s:float = None, mu:float = None, sigma:float = None) -> None:
+    def __init__(self, N:int, s:float, mu:float, sigma:float):
         
         if(type(s) == float):
             s = np.array(s)
@@ -89,20 +130,13 @@ class TestRoll:
  
     def tr_size_nn(self):
         """
-        # computes the profit-maximizing test size for a 2-armed Test & Roll
-        # where response is normal with normal priors (possibly asymmetric)
-        # N is the size of the deployment population
-        # s is a vector of lenght 2 of the (known) std dev of the outcome
-        # mu is a vector of length 2 of the means of the prior on the mean response 
-        # sigma is a vector of length 2 of the std dev of the prior on the mean response
-        # if lenght(s)=1 symmetric priors are assumed and only the first elements of mu and sigma are used
-
-        Parameters
-        ----------
+        Computes the profit-maximizing test size for test & roll with 2 arms.
         
+
         Returns
         -------
-        None.
+        array_like
+            The sample size for each treatment arm.
         
         """
          
@@ -121,28 +155,24 @@ class TestRoll:
             
         return self.sample_size 
      
-    def profit_nn(self, n:float = None, log_n:bool = False, sign:float = 1.0):
+    def profit_nn(self, n, log_n:bool = False, sign:float = 1.0):
         """
-        # computes the per-customer profit for test & roll with 2 arms
-        # where response is normal with (possibly assymetric) normal priors  
-        # n is a vector of length 2 of sample sizes
-        # N is the size of the deployment population
-        # s is a vector of lenght 2 of the (known) std dev of the outcome
-        # mu is a vector of length 2 of the means of the prior on the mean response 
-        # sigma is a vector of length 2 of the std dev of the prior on the mean response 
-        # if length(n)=1, equal sample sizes are assumed
-        # if lenght(s)=1 symmetric priors are assumed and only the first elements of mu and sigma are used
-
+        Computes the per-customer profit for test & roll with 2 arms
+        where response is normal with (possibly assymetric) normal priors 
+        
         Parameters
         ----------
-        n : TYPE
-            DESCRIPTION.
-        log_n : TYPE, optional
-            DESCRIPTION. The default is FALSE.
+        n: array-like 
+           Sample sizes
+        
+        log_n: bool (TBD)
 
+        sign: float(TBD)
+         
         Returns
         -------
-        None.
+        array_like
+            Per-customer profit.
 
         """
         
