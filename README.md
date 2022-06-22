@@ -8,10 +8,10 @@ Profit Maximizing A/B Testing.
 ## Installation
 
 ```bash
-$ cd dist
+$ cd dist/
 $ tar xzf pytestroll-0.1.0.tar.gz
 $ pip install pytestroll-0.1.0/   
-``
+```
 
 ## Usage
 
