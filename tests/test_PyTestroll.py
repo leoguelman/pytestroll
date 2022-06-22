@@ -61,7 +61,7 @@ def test_nht_size_nn():
 def test_profit_perfect_nn():
     
     y_ = np.float64(0.5169256875064326)
-    y = TestRoll(mu=0.5, sigma=0.03)._profit_perfect_nn()
+    y = TestRoll(N=100000, s=np.sqrt(0.68*(1-0.68)), mu=0.5, sigma=0.03)._profit_perfect_nn()
     
     assert_almost_equal(y_, y)
     
@@ -69,7 +69,7 @@ def test_error_rate_nn():
     
     y_ = np.float64(0.1445253424807597)
     
-    y = TestRoll(s=np.sqrt(0.68*(1-0.68)), sigma=0.02)._error_rate_nn(n = np.array([2283.89002819, 2283.89002819]))
+    y = TestRoll(N=100000, s=np.sqrt(0.68*(1-0.68)), mu=0.5, sigma=0.02)._error_rate_nn(n = np.array([2283.89002819, 2283.89002819]))
     
     assert_almost_equal(y_, y)
     
