@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytestroll"
-version = "0.0.9999"
+version = "0.1.0"
 description = "Profit Maximizing A/B Testing"
 authors = ["Leo Guelman"]
 license = "MIT"
